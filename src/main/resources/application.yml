@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: xiangzi-ai-agent
+  profiles:
+    active: local
+
+server:
+  port: 8123
+  servlet:
+    context-path: /api
+
+# 阿里云通义千问配置
+dashscope:
+  api:
+    key: sk-66924b4b6bc545a7a26bc955f830eaa2
+
+
+# springdoc-openapi
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+  api-docs:
+    path: /v3/api-docs
+    # 扫描接口包的路径
+  group-configs:
+    - group: 'default'
+      paths-to-match: '/**'
+      packages-to-scan: com.xiangzi.xiangziaiagent.controller
+# knife4j
+knife4j:
+  enable: true
+  setting:
+    language: zh_cn
