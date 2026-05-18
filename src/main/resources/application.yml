@@ -30,6 +30,7 @@ springdoc:
       packages-to-scan: com.xiangzi.xiangziaiagent.controller
 # knife4j
 knife4j:
-  enable: true
+  enable: true  # 开启增强功能
+  production: false  # 测试环境设为false，生产环境建议设为true避免泄露
   setting:
-    language: zh_cn
+    language: zh_CN  # 中文界面
