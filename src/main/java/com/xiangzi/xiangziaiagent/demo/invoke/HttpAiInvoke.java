@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class HttpAiInvoke {
 
-//    @Value("${dashscope.api.key:}")
+    @Value("${dashscope.api.key:}")
     private String apiKey = TestApiKey.API_KEY;
 
     private static final String API_URL = "https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation";
