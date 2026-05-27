@@ -1,5 +1,7 @@
 package com.xiangzi.xiangziaiagent.app;
 
+import com.xiangzi.xiangziaiagent.advisor.MyLoggerAdvisor;
+import com.xiangzi.xiangziaiagent.advisor.ReReadIngAdvisor;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
@@ -33,7 +35,9 @@ public class LoveApp {
         chatClient = ChatClient.builder(dashscopeChatModel)
                 .defaultSystem(SYSTEM_PROMPT)
                 .defaultAdvisors(
-                        new MessageChatMemoryAdvisor(chatMemory)
+                        new MessageChatMemoryAdvisor(chatMemory),
+                        new ReReadIngAdvisor()
+//                        new MyLoggerAdvisor()
                 )
                 .build();
     }

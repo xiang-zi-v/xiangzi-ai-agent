@@ -7,12 +7,7 @@ spring:
 server:
   port: 8123
   servlet:
-    context-path: /api
-
-# 阿里云通义千问配置
-dashscope:
-  api:
-    key: sk-97925dc86d00424ea05e8c93057f0499
+    context-path: /api # 上下文路径
 
 
 # springdoc-openapi
@@ -34,3 +29,13 @@ knife4j:
   production: false  # 测试环境设为false，生产环境建议设为true避免泄露
   setting:
     language: zh_CN  # 中文界面
+
+
+
+logging:
+  level:
+    org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor: debug
+
+
+
+
