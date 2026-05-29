@@ -44,6 +44,8 @@ public class MyLoggerAdvisor implements CallAroundAdvisor, StreamAroundAdvisor {
         advisedRequest = this.before(advisedRequest);
         Flux<AdvisedResponse> advisedResponseFlux = chain.nextAroundStream(advisedRequest);
 
+        // 通过 MessageAggregator工具类将Flux响应聚合成一个单个的AdvisedResponse，每个AdvisedResponse包含一个Message
+        // 不能在 MessageAggregator 中修改响应，因为他是只读的
         return (new MessageAggregator()).aggregateAdvisedResponse(advisedResponseFlux, this::after);
     }
 
