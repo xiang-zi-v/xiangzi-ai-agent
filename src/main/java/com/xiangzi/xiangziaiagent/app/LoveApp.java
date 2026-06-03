@@ -1,5 +1,8 @@
 package com.xiangzi.xiangziaiagent.app;
 
+import com.alibaba.cloud.ai.dashscope.api.DashScopeApi;
+import com.alibaba.cloud.ai.dashscope.rag.DashScopeDocumentRetriever;
+import com.alibaba.cloud.ai.dashscope.rag.DashScopeDocumentRetrieverOptions;
 import com.xiangzi.xiangziaiagent.advisor.MyLoggerAdvisor;
 import com.xiangzi.xiangziaiagent.chatmemory.FileBasedChatMemory;
 import com.xiangzi.xiangziaiagent.chatmemory.MysqlChatMemory;
@@ -8,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.QuestionAnswerAdvisor;
+import org.springframework.ai.chat.client.advisor.api.Advisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.InMemoryChatMemory;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
@@ -16,7 +20,10 @@ import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.ai.document.Document;
 import org.springframework.ai.model.Media;
+import org.springframework.ai.rag.Query;
+import org.springframework.ai.rag.retrieval.search.DocumentRetriever;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -157,6 +164,24 @@ public class LoveApp {
         String text = chatResponse.getResult().getOutput().getText();
         log.info("text:{}", text);
         return text;
+    }
+
+    @Resource
+    private Advisor ragCloudAdvisor;
+    public String doChatWithRagCloud(String prompt, String chatId) {
+        ChatResponse chatResponse = chatClient
+                .prompt()
+                .user(prompt)
+                .advisors(spec -> spec.param(CHAT_MEMORY_CONVERSATION_ID_KEY, chatId)
+                        .param(CHAT_MEMORY_RETRIEVE_SIZE_KEY, 10)
+                )
+                .advisors(new MyLoggerAdvisor())
+                .advisors(
+                        ragCloudAdvisor
+                )
+                .call()
+                .chatResponse();
+        return chatResponse.getResult().getOutput().getText();
     }
 
 

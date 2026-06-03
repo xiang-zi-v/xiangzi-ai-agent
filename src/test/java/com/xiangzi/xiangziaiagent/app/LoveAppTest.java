@@ -55,5 +55,12 @@ class LoveAppTest {
     }
 
 
+    @Test
+    void doChatWithRagCloud() {
+        String chatId = UUID.randomUUID().toString();
+        String prompt = "恋爱中如何有效处理双方的争吵？";
+        String response = loveApp.doChatWithRagCloud(prompt, chatId);
+    }
+
 
 }
