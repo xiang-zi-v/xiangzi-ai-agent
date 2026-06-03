@@ -1,10 +1,6 @@
-
 # Spring AI 开发框架实战
 
 基于 Spring AI 开发框架实战为核心，涉及到多种主流 AI 客户端和工具库的运用。
-
-![10e91930-73ac-4379-91b6-802d0cc6c985.jpg](../../../Users/xiangzhi/Desktop/%E9%B1%BC%E7%9A%AE%E5%8E%9F%E5%88%9B%E9%A1%B9%E7%9B%AE/AI%20%E8%B6%85%E7%BA%A7%E6%99%BA%E8%83%BD%E4%BD%93/10e91930-73ac-4379-91b6-802d0cc6c985.jpg)
-
 
 ## 技术栈
 
@@ -23,9 +19,12 @@
 - Ollama 大模型部署
 - 工具库如：Kryo 高性能序列化 + Jsoup 网页抓取 + iText PDF 生成 + Knife4j 接口文档
 
+![输入图片说明](https://foruda.gitee.com/images/1780490207941307131/766e3292_11540411.jpeg "10e91930-73ac-4379-91b6-802d0cc6c985.jpg")
+
+
 ## 架构设计
 
 从客户端发送请求开始，自上而下经过一系列处理，最终得到响应结果。架构图如下：
 
-
-![ee2eb99a-88f3-4ca5-a4c2-73e6adac9715.jpg](../../../Users/xiangzhi/Desktop/%E9%B1%BC%E7%9A%AE%E5%8E%9F%E5%88%9B%E9%A1%B9%E7%9B%AE/AI%20%E8%B6%85%E7%BA%A7%E6%99%BA%E8%83%BD%E4%BD%93/ee2eb99a-88f3-4ca5-a4c2-73e6adac9715.jpg)
+![输入图片说明](https://foruda.gitee.com/images/1780490222541012402/147a75e4_11540411.jpeg "ee2eb99a-88f3-4ca5-a4c2-73e6adac9715.jpg")
+ 
