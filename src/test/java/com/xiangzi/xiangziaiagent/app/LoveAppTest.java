@@ -47,8 +47,12 @@ class LoveAppTest {
         String response = loveApp.doChatUploadFile(message, chatId);
     }
 
-
-
+    @Test
+    void doChatWithVectorStore() {
+        String chatId = UUID.randomUUID().toString();
+        String prompt = "恋爱中如何有效处理双方的争吵？";
+        String response = loveApp.doChatWithVectorStore(prompt, chatId);
+    }
 
 
 

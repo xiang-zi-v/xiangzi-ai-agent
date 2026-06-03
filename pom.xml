@@ -116,7 +116,15 @@
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-markdown-document-reader</artifactId>
             <version>1.0.0-M6</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.ai</groupId>
+                    <artifactId>spring-ai-core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
+
+
 
         <!--  springAI pdf 文件读取 -->
         <!--<dependency>
