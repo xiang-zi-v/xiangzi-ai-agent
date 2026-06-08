@@ -124,13 +124,18 @@
             </exclusions>
         </dependency>
 
-
         <!--  springAI pdf 文件读取 -->
-        <!--<dependency>
+        <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-pdf-document-reader</artifactId>
             <version>1.0.0-M6</version>
-        </dependency>-->
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.ai</groupId>
+                    <artifactId>spring-ai-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
 
     </dependencies>
