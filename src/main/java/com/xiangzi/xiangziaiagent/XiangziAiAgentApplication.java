@@ -8,6 +8,7 @@ public class XiangziAiAgentApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(XiangziAiAgentApplication.class, args);
+        System.out.println("XiangziAiAgentApplication started!");
     }
 
 }

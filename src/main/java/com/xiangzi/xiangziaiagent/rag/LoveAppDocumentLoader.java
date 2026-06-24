@@ -1,5 +1,6 @@
 package com.xiangzi.xiangziaiagent.rag;
 
+import cn.hutool.core.io.FileUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.reader.ExtractedTextFormatter;
@@ -40,12 +41,13 @@ public class LoveAppDocumentLoader {
             Resource[] resources = this.resourcePatternResolver.getResources("classpath:document/*.md");
             for (Resource resource : resources) {
                 String filename = resource.getFilename();
-                // 配置 MarkdownDocumentReader 读取文档配置
+                String status = filename.substring(filename.length() - 6, filename.length() - 4);                // 配置 MarkdownDocumentReader 读取文档配置
                 MarkdownDocumentReaderConfig config = MarkdownDocumentReaderConfig.builder()
                         .withHorizontalRuleCreateDocument(true) // 使用水平规则创建文档
                         .withIncludeCodeBlock(false) // 包含代码块
                         .withIncludeBlockquote(false) // 包含引用块
                         .withAdditionalMetadata("filename", filename) // 添加文件名元数据(元信息)
+                        .withAdditionalMetadata("status",status)
                         .build();
                 // 创建 MarkdownDocumentReader 读取文档实例
                 MarkdownDocumentReader reader = new MarkdownDocumentReader(resource, config);

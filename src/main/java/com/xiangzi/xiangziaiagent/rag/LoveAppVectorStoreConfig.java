@@ -1,5 +1,7 @@
 package com.xiangzi.xiangziaiagent.rag;
 
+import com.xiangzi.xiangziaiagent.etl.MyKeywordEnricher;
+import com.xiangzi.xiangziaiagent.etl.MyTokenTextSplitter;
 import jakarta.annotation.Resource;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.embedding.EmbeddingModel;
@@ -8,6 +10,7 @@ import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.HashMap;
 import java.util.List;
 
 @Configuration
@@ -18,6 +21,10 @@ public class LoveAppVectorStoreConfig {
      */
     @Resource
     private LoveAppDocumentLoader loveAppDocumentLoader;
+    @Resource
+    private MyTokenTextSplitter myTokenTextSplitter;
+    @Resource
+    private MyKeywordEnricher myKeywordEnricher;
 
 
     /**
@@ -33,6 +40,11 @@ public class LoveAppVectorStoreConfig {
                 .build();
         // 加载文档列表
         List<Document> documents = loveAppDocumentLoader.loadDocuments();
+
+//        List<Document> splitDocuments = myTokenTextSplitter.splitCustomized(documents); // 分割文档
+
+//        List<Document> enrichDocuments = myKeywordEnricher.enrichDocuments(documents); // AI 提取关键词
+
         // 将文档添加到向量存储中
         simpleVectorStore.add(documents);
         return simpleVectorStore;

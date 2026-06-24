@@ -6,6 +6,7 @@ import com.alibaba.cloud.ai.dashscope.rag.DashScopeDocumentRetrieverOptions;
 import com.xiangzi.xiangziaiagent.advisor.MyLoggerAdvisor;
 import com.xiangzi.xiangziaiagent.chatmemory.FileBasedChatMemory;
 import com.xiangzi.xiangziaiagent.chatmemory.MysqlChatMemory;
+import com.xiangzi.xiangziaiagent.etl.LoveAppRagCustomAdvisorFactory;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
@@ -149,6 +150,7 @@ public class LoveApp {
     @Resource
     private VectorStore loveAppVectorStore;
     public String doChatWithVectorStore(String prompt, String chatId) {
+        Advisor ragCustomAdvisor = LoveAppRagCustomAdvisorFactory.createLoveAppRagCustomAdvisor(loveAppVectorStore, "单身");
         ChatResponse chatResponse = chatClient
                 .prompt()
                 .user(prompt)
@@ -159,6 +161,8 @@ public class LoveApp {
                 .advisors(
                         new QuestionAnswerAdvisor(loveAppVectorStore)
                 )
+//                .advisors(ragCustomAdvisor)
+
                 .call()
                 .chatResponse();
         String text = chatResponse.getResult().getOutput().getText();
