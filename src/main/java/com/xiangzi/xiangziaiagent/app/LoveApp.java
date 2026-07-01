@@ -150,7 +150,7 @@ public class LoveApp {
     @Resource
     private VectorStore loveAppVectorStore;
     public String doChatWithVectorStore(String prompt, String chatId) {
-        Advisor ragCustomAdvisor = LoveAppRagCustomAdvisorFactory.createLoveAppRagCustomAdvisor(loveAppVectorStore, "单身");
+//        Advisor ragCustomAdvisor = LoveAppRagCustomAdvisorFactory.createLoveAppRagCustomAdvisor(loveAppVectorStore, "单身");
         ChatResponse chatResponse = chatClient
                 .prompt()
                 .user(prompt)
