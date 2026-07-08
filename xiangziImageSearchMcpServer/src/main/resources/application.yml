@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: xiangziImageSearchMcpServer
+  profiles:
+    active: sse
+
+server:
+  port: 8127

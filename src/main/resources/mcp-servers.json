@@ -1,0 +1,16 @@
+
+// 配置 MCP 服务器 ,运行服务商的 MCP 服务器
+{
+  "mcpServers": {
+    "amap-maps": {
+      "command": "npx.cmd", // 注意：在 Windows 上使用 .cmd 后缀
+      "args": [
+        "-y",
+        "@amap/amap-maps-mcp-server"
+      ],
+      "env": {
+        "AMAP_MAPS_API_KEY": "改成你的 API Key"
+      }
+    }
+  }
+}

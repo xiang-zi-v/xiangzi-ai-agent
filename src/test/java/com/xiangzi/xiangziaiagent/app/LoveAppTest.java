@@ -63,5 +63,12 @@ class LoveAppTest {
         String response = loveApp.doChatWithRagCloud(prompt, chatId);
     }
 
+    @Test
+    void doChatWithMcp() {
+        String chatId = UUID.randomUUID().toString();
+        String message = "北京天气怎么样？";
+        String response = loveApp.doChatWithMcp(message, chatId);
+        assertNotNull(response);
+    }
 
 }
