@@ -8,7 +8,7 @@ public class XiangziAiAgentApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(XiangziAiAgentApplication.class, args);
-        System.out.println("XiangziAiAgentApplication started!");
+        System.out.println("祥子AI智能体启动成功！");
     }
 
 }
