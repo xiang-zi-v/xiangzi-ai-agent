@@ -70,7 +70,7 @@ public abstract class BaseAgent {
         try {
 
             // 如果当前的状态没有完成，且当前的步骤没有超过最大步骤，继续执行
-            while (this.currentStep < this.maxStep && this.state != AgentState.RUNNING) {
+            while (this.currentStep < this.maxStep && this.state != AgentState.FINISHED) {
                 this.currentStep++;
                 // 获取每一步的结果
                 String stepResult = this.step();
