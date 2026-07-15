@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.Message;
+import org.springframework.ai.chat.messages.MessageType;
 import org.springframework.ai.chat.messages.UserMessage;
 
 import java.util.ArrayList;
@@ -74,6 +75,10 @@ public abstract class BaseAgent {
                 this.currentStep++;
                 // 获取每一步的结果
                 String stepResult = this.step();
+                // 每一步 step 执行完都要检查是否陷入循环
+                if (isStuck()) {
+                    handleStuckState();
+                }
                 String result = "Step " + this.currentStep + ": " + stepResult;
                 // 把每一步的结果加入到结果列表
                 results.add(result);
@@ -96,8 +101,47 @@ public abstract class BaseAgent {
     public abstract String step();
 
     protected void clearUp() {
+        this.messagesList.clear();
+    }
 
+    private int duplicateThreshold = 2;
 
+    /**
+     * 处理陷入循环的状态
+     */
+    protected void handleStuckState() {
+        String stuckPrompt = "观察到重复响应。考虑新策略，避免重复已尝试过的无效路径。";
+        this.nextStepPrompt = stuckPrompt + "\n" + (this.nextStepPrompt != null ? this.nextStepPrompt : "");
+        System.out.println("Agent detected stuck state. Added prompt: " + stuckPrompt);
+    }
+
+    /**
+     * 检查代理是否陷入循环
+     *
+     * @return 是否陷入循环
+     */
+    protected boolean isStuck() {
+        List<Message> messages = this.messagesList;
+        if (messages.size() < 2) {
+            return false;
+        }
+
+        Message lastMessage = messages.getLast();
+        if (lastMessage.getText() == null || lastMessage.getText().isEmpty()) {
+            return false;
+        }
+
+        // 计算重复内容出现次数
+        int duplicateCount = 0;
+        for (int i = messages.size() - 2; i >= 0; i--) {
+            Message msg = messages.get(i);
+            if (msg.getMessageType() == MessageType.ASSISTANT &&
+                    lastMessage.getText().equals(msg.getText())) {
+                duplicateCount++;
+            }
+        }
+
+        return duplicateCount >= this.duplicateThreshold;
     }
 
 

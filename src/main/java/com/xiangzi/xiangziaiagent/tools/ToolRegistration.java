@@ -25,6 +25,7 @@ public class ToolRegistration {
         PDFGenerationTool pdfGenerationTool = new PDFGenerationTool();
         TimeOutTool timeOutTool = new TimeOutTool();
         TerminateTool terminateTool = new TerminateTool();
+        AskHuman askHuman = new AskHuman();
         return ToolCallbacks.from(
             fileOperationTool,
             webSearchTool,
@@ -33,7 +34,8 @@ public class ToolRegistration {
             terminalOperationTool,
             pdfGenerationTool,
             timeOutTool,
-            terminateTool
+            terminateTool,
+            askHuman
         );
     }
 
