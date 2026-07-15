@@ -33,6 +33,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileUrlResource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MimeTypeUtils;
+import reactor.core.publisher.Flux;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -94,6 +95,23 @@ public class LoveApp {
         return text;
     }
 
+    /**
+     *
+     * @param message
+     * @param chatId
+     * @return
+     */
+    public Flux<String> doChatByStream(String message, String chatId) {
+        return chatClient
+                .prompt()
+                .user(message)
+                .advisors(spec -> spec.param(CHAT_MEMORY_CONVERSATION_ID_KEY, chatId)
+                        .param(CHAT_MEMORY_RETRIEVE_SIZE_KEY, 10)
+                )
+                .stream()
+                .content();
+    }
+
 
     public void coChatConverter(String userInput) {
         LoveReport actorsFilms = ChatClient.create(chatModel).prompt()
@@ -151,6 +169,7 @@ public class LoveApp {
 
     @Resource
     private VectorStore loveAppVectorStore;
+
     public String doChatWithVectorStore(String prompt, String chatId) {
 //        Advisor ragCustomAdvisor = LoveAppRagCustomAdvisorFactory.createLoveAppRagCustomAdvisor(loveAppVectorStore, "单身");
         ChatResponse chatResponse = chatClient
@@ -174,6 +193,7 @@ public class LoveApp {
 
     @Resource
     private Advisor ragCloudAdvisor;
+
     public String doChatWithRagCloud(String prompt, String chatId) {
         ChatResponse chatResponse = chatClient
                 .prompt()
@@ -229,8 +249,6 @@ public class LoveApp {
         log.info("content: {}", content);
         return content;
     }
-
-
 
 
 }

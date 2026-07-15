@@ -1,5 +1,6 @@
 package com.xiangzi.xiangziaiagent.agent;
 
+import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.StrUtil;
 import com.xiangzi.xiangziaiagent.agent.model.AgentState;
 import lombok.Data;
@@ -8,13 +9,15 @@ import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.MessageType;
 import org.springframework.ai.chat.messages.UserMessage;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * 抽象基础代理类，用于管理代理状态和执行流程。
- *
+ * <p>
  * 提供状态转换、内存管理和基于步骤的执行循环的基础功能。
  * 子类必须实现step方法。
  */
@@ -95,6 +98,88 @@ public abstract class BaseAgent {
         } finally {
             this.clearUp();
         }
+    }
+
+
+    /**
+     * 运行代理（流式输出）
+     *
+     * @param userPrompt 用户提示词
+     * @return SseEmitter实例
+     */
+    public SseEmitter runStream(String userPrompt) {
+        SseEmitter emitter = new SseEmitter(300000L); // 5分钟超时
+        try {
+            if (state != AgentState.IDLE) {
+                emitter.send("can not run agent from state " + this.state);
+                emitter.complete();
+                return emitter;
+            }
+            if (StrUtil.isBlank(userPrompt)) {
+                emitter.send("can not run agent with userPrompt is empty");
+                emitter.complete();
+                return emitter;
+            }
+        } catch (IOException e) {
+            emitter.completeWithError(e);
+            emitter.complete();
+        }
+
+        // 更新状态
+        this.state = AgentState.RUNNING;
+        this.currentStep = 0;
+        // 记录当前用户第一条消息
+        this.messagesList.add(new UserMessage(userPrompt));
+
+        ThreadUtil.execAsync(() -> {
+            try {
+                // 如果当前的状态没有完成，且当前的步骤没有超过最大步骤，继续执行
+                while (this.currentStep < this.maxStep && this.state != AgentState.FINISHED) {
+                    this.currentStep++;
+                    // 获取每一步的结果
+                    String stepResult = this.step();
+                    // 每一步 step 执行完都要检查是否陷入循环
+                    if (isStuck()) {
+                        handleStuckState();
+                    }
+                    String result = "Step " + this.currentStep + ": " + stepResult;
+                    emitter.send(result);
+                }
+                if (this.currentStep >= this.maxStep) {
+                    this.state = AgentState.FINISHED;
+                    emitter.send("Terminated Reached max steps (" + this.maxStep + ")");
+                }
+                emitter.complete();
+            } catch (Exception e) {
+                state = AgentState.ERROR;
+                log.error("执行智能体失败", e);
+                try {
+                    emitter.send("执行错误: " + e.getMessage());
+                    emitter.complete();
+                } catch (Exception ex) {
+                    emitter.completeWithError(ex);
+                }
+            } finally {
+                this.clearUp();
+            }
+        });
+
+        // 设置超时和完成回调
+        emitter.onTimeout(() -> {
+            this.state = AgentState.ERROR;
+            this.clearUp();
+            log.warn("SSE connection timed out");
+        });
+
+        emitter.onCompletion(() -> {
+            if (this.state == AgentState.RUNNING) {
+                this.state = AgentState.FINISHED;
+            }
+            this.clearUp();
+            log.info("SSE connection completed");
+        });
+
+        return emitter;
     }
 
 
