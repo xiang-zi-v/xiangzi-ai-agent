@@ -149,7 +149,7 @@
         <div class="footer-right">
           <span>&copy; {{ currentYear }} Xiangzi. All rights reserved.</span>
           <span class="footer-sep">|</span>
-          <span>Powered by SpringBoot + Vue3</span>
+<!--          <span>Powered by SpringBoot + Vue3</span>-->
         </div>
       </div>
     </footer>
