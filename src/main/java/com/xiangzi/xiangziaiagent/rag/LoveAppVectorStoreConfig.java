@@ -33,7 +33,7 @@ public class LoveAppVectorStoreConfig {
      *
      * @return 已加载文档的VectorStore实例
      */
-    @Bean
+//    @Bean
     VectorStore loveAppVectorStore(EmbeddingModel dashScopeEmbeddingModel) {
         // 使用DashScope嵌入模型构建SimpleVectorStore
         SimpleVectorStore simpleVectorStore = SimpleVectorStore.builder(dashScopeEmbeddingModel)

@@ -44,7 +44,7 @@ public class AiController {
      * @param chatId
      * @return
      */
-    @GetMapping(value = "/love_app/chat/async", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @GetMapping(value = "/love_app/chat/sse", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<String> doChatWithLoveAppASync(String message, String chatId) {
         return loveApp.doChatByStream(message, chatId);
     }
@@ -57,7 +57,7 @@ public class AiController {
      * @param chatId
      * @return
      */
-    @GetMapping(value = "/love_app/chat/sse")
+    @GetMapping(value = "/love_app/chat/async")
     public Flux<ServerSentEvent<String>> doChatWithLoveAppSSE(String message, String chatId) {
         return loveApp.doChatByStream(message, chatId)
                 .map(chunk -> ServerSentEvent.<String>builder()

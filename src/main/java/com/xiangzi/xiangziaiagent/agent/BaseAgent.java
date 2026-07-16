@@ -189,7 +189,7 @@ public abstract class BaseAgent {
         this.messagesList.clear();
     }
 
-    private int duplicateThreshold = 2;
+    private int duplicateThreshold = 3;
 
     /**
      * 处理陷入循环的状态

@@ -35,3 +35,5 @@ build/
 
 ### VS Code ###
 .vscode/
+/xiangxi-ai-agent-frontend/dist/
+/xiangxi-ai-agent-frontend/node_modules/

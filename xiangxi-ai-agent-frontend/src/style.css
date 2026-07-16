@@ -1,0 +1,164 @@
+/* ============================================================
+   Xiangzi AI Agent — 全局样式系统
+   赛博朋克 · 极客风格 · 响应式兼容
+   ============================================================ */
+
+/* ---- CSS 自定义属性 ---- */
+:root {
+  /* 主色调 — 赛博朋克霓虹 */
+  --color-bg-primary: #050510;
+  --color-bg-secondary: #0a0a1a;
+  --color-bg-card: #0d0d24;
+  --color-bg-input: #12122a;
+  --color-bg-hover: #161630;
+
+  /* 霓虹色 */
+  --color-cyan: #00f0ff;
+  --color-magenta: #ff00ff;
+  --color-green: #00ff41;
+  --color-yellow: #ffd700;
+  --color-purple: #b44dff;
+
+  /* 文字 */
+  --color-text-primary: #e0e0f0;
+  --color-text-secondary: #8888aa;
+  --color-text-muted: #555577;
+  --color-text-inverse: #050510;
+
+  /* 边框 */
+  --color-border: #1a1a3a;
+  --color-border-glow: rgba(0, 240, 255, 0.3);
+
+  /* 阴影 */
+  --shadow-neon-cyan: 0 0 20px rgba(0, 240, 255, 0.3);
+  --shadow-neon-magenta: 0 0 20px rgba(255, 0, 255, 0.3);
+  --shadow-card: 0 4px 30px rgba(0, 0, 0, 0.5);
+
+  /* 字体 */
+  --font-mono: 'Courier New', 'Consolas', 'Monaco', 'Liberation Mono', monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans SC', sans-serif;
+
+  /* 间距 */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+
+  /* 圆角 */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+
+  /* 动画 */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
+
+  /* 断点参考（CSS 变量不可用于媒体查询，仅作文档） */
+  --bp-mobile: 640px;
+  --bp-tablet: 768px;
+  --bp-laptop: 1024px;
+  --bp-desktop: 1280px;
+}
+
+/* ---- 全局重置 ---- */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+#app {
+  min-height: 100vh;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+}
+
+input,
+textarea {
+  font-family: inherit;
+}
+
+/* ---- 滚动条美化 ---- */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-text-muted);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-cyan);
+}
+
+/* ---- 选中文字 ---- */
+::selection {
+  background: var(--color-cyan);
+  color: var(--color-text-inverse);
+}
+
+/* ---- 页面过渡动画 ---- */
+.page-fade-enter-active,
+.page-fade-leave-active {
+  transition: opacity var(--transition-normal);
+}
+
+.page-fade-enter-from,
+.page-fade-leave-to {
+  opacity: 0;
+}
+
+/* ---- 响应式工具类 ---- */
+@media (max-width: 640px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  html {
+    font-size: 15px;
+  }
+}
