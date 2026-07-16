@@ -2,6 +2,7 @@ package com.xiangzi.xiangziaiagent.controller;
 
 
 import com.xiangzi.xiangziaiagent.agent.XiangziManus;
+import com.xiangzi.xiangziaiagent.app.FitnessApp;
 import com.xiangzi.xiangziaiagent.app.LoveApp;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.model.ChatModel;
@@ -22,6 +23,7 @@ import java.io.IOException;
 public class AiController {
 
     private final LoveApp loveApp;
+    private final FitnessApp fitnessApp;
     private final ToolCallback[] allTools;
     private final ChatModel dashscopeChatModel;
 
@@ -47,6 +49,18 @@ public class AiController {
     @GetMapping(value = "/love_app/chat/sse", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<String> doChatWithLoveAppASync(String message, String chatId) {
         return loveApp.doChatByStream(message, chatId);
+    }
+
+    /**
+     * 异步调用LoveApp的doChat方法,并且添加SSE ‍对应的‍ MediaType
+     *
+     * @param message
+     * @param chatId
+     * @return
+     */
+    @GetMapping(value = "/fitness_app/chat/sse", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<String> doChatWithFitnessAppASync(String message, String chatId) {
+        return fitnessApp.doChatByStream(message, chatId);
     }
 
 

@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
 import LoveChat from '../views/LoveChat.vue'
 import ManusChat from '../views/ManusChat.vue'
+import FitnessChat from '../views/FitnessChat.vue'
 
 const routes = [
   {
@@ -26,6 +27,14 @@ const routes = [
     component: ManusChat,
     meta: {
       title: 'AI 超级智能体 | Xiangzi AI',
+    },
+  },
+  {
+    path: '/fitness-chat',
+    name: 'FitnessChat',
+    component: FitnessChat,
+    meta: {
+      title: '祥子健身教练 | Xiangzi AI',
     },
   },
 ]

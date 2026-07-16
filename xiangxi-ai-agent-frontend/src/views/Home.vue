@@ -129,12 +129,57 @@
             <span class="card-enter">[ ENTER ]</span>
           </div>
         </router-link>
+
+        <!-- 卡片 3: 祥子健身教练 -->
+        <router-link to="/fitness-chat" class="app-card app-card-fitness">
+          <div class="card-header">
+            <span class="card-dot dot-red"></span>
+            <span class="card-dot dot-yellow"></span>
+            <span class="card-dot dot-green"></span>
+            <span class="card-title-bar">fitness_coach.exe</span>
+          </div>
+          <div class="card-body">
+            <div class="card-avatar avatar-fitness">
+              <svg viewBox="0 0 48 48" class="avatar-svg">
+                <defs>
+                  <linearGradient id="fitnessGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#00ff41" />
+                    <stop offset="100%" stop-color="#16a34a" />
+                  </linearGradient>
+                </defs>
+                <rect x="6" y="4" width="8" height="12" rx="3" fill="url(#fitnessGrad)" opacity="0.9" />
+                <rect x="34" y="4" width="8" height="12" rx="3" fill="url(#fitnessGrad)" opacity="0.9" />
+                <rect x="16" y="8" width="16" height="6" rx="3" fill="url(#fitnessGrad)" />
+                <rect x="6" y="4" width="4" height="4" rx="1" fill="url(#fitnessGrad)" opacity="0.5" />
+                <rect x="38" y="4" width="4" height="4" rx="1" fill="url(#fitnessGrad)" opacity="0.5" />
+                <path d="M18 32 L18 38 Q18 42 22 42 L26 42 Q30 42 30 38 L30 32" fill="none" stroke="url(#fitnessGrad)" stroke-width="2.5" stroke-linecap="round" />
+                <line x1="14" y1="36" x2="34" y2="36" stroke="url(#fitnessGrad)" stroke-width="2" opacity="0.5" />
+                <circle cx="24" cy="20" r="12" fill="none" stroke="url(#fitnessGrad)" stroke-width="2" opacity="0.3" />
+              </svg>
+            </div>
+            <div class="card-text">
+              <h3 class="card-name">
+                <span class="terminal-arrow">&gt;</span> 祥子健身教练
+              </h3>
+              <p class="card-desc">专业AI健身指导 · 个性化训练计划 · 科学饮食建议 · 动作实时纠正</p>
+              <div class="card-tags">
+                <span class="tag">训练计划</span>
+                <span class="tag">饮食建议</span>
+                <span class="tag">动作纠正</span>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <span class="card-status">● ONLINE</span>
+            <span class="card-enter">[ ENTER ]</span>
+          </div>
+        </router-link>
       </div>
 
       <!-- 底部状态栏 -->
       <div class="status-bar">
         <span class="status-item"><span class="status-label">SYS:</span> NORMAL</span>
-        <span class="status-item"><span class="status-label">NODES:</span> 02 ACTIVE</span>
+        <span class="status-item"><span class="status-label">NODES:</span> 03 ACTIVE</span>
         <span class="status-item"><span class="status-label">LAT:</span> &lt;50ms</span>
         <span class="status-item"><span class="status-label">UPTIME:</span> 99.99%</span>
       </div>
@@ -162,7 +207,7 @@ import { useSEO } from '../composables/useSEO.js'
 
 useSEO({
   title: '首页',
-  description: 'Xiangzi AI Agent - 新一代智能AI助手平台。赛博朋克风格的AI应用中心，提供AI恋爱大师、AI超级智能体等前沿AI服务。',
+  description: 'Xiangzi AI Agent - 新一代智能AI助手平台。赛博朋克风格的AI应用中心，提供AI恋爱大师、AI超级智能体、祥子健身教练等前沿AI服务。',
 })
 
 const currentYear = computed(() => new Date().getFullYear())
@@ -439,10 +484,17 @@ function particleStyle(n) {
 /* ---- 卡片网格 ---- */
 .cards-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
   gap: var(--space-xl);
   width: 100%;
-  max-width: 700px;
+  max-width: 1050px;
+}
+
+@media (max-width: 1024px) {
+  .cards-grid {
+    grid-template-columns: 1fr 1fr;
+    max-width: 700px;
+  }
 }
 
 @media (max-width: 640px) {
@@ -488,6 +540,16 @@ function particleStyle(n) {
 .app-card-love:hover {
   border-color: rgba(255, 107, 157, 0.4);
   box-shadow: 0 0 30px rgba(255, 107, 157, 0.25), var(--shadow-card);
+}
+
+.app-card-manus:hover {
+  border-color: rgba(167, 139, 250, 0.4);
+  box-shadow: 0 0 30px rgba(167, 139, 250, 0.25), var(--shadow-card);
+}
+
+.app-card-fitness:hover {
+  border-color: rgba(0, 255, 65, 0.4);
+  box-shadow: 0 0 30px rgba(0, 255, 65, 0.2), var(--shadow-card);
 }
 
 /* ---- 卡片标题栏 ---- */
@@ -563,6 +625,11 @@ function particleStyle(n) {
   box-shadow: 0 0 20px rgba(167, 139, 250, 0.2);
 }
 
+.avatar-fitness {
+  background: linear-gradient(135deg, rgba(0, 255, 65, 0.2), rgba(22, 163, 74, 0.1));
+  box-shadow: 0 0 20px rgba(0, 255, 65, 0.2);
+}
+
 .avatar-svg {
   width: 40px;
   height: 40px;
@@ -620,6 +687,11 @@ function particleStyle(n) {
 .app-card-manus .tag {
   border-color: rgba(167, 139, 250, 0.2);
   color: rgba(167, 139, 250, 0.7);
+}
+
+.app-card-fitness .tag {
+  border-color: rgba(0, 255, 65, 0.2);
+  color: rgba(0, 255, 65, 0.7);
 }
 
 /* ---- 卡片底栏 ---- */
