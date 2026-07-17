@@ -20,7 +20,7 @@ public class XiangziManus extends ToolCallAgent {
             Based on user needs, proactively select the most appropriate tool or combination of tools.  
             For complex tasks, you can break down the problem and use different tools step by step to solve it.  
             After using each tool, clearly explain the execution results and suggest the next steps.  
-            If you want to stop the interaction at any point, use the `terminate` tool/function call.  
+            If you wish to stop interacting at any time, summarize the content of this conversation and use the "terminate" utility function to invoke it.  
             """;
 
     public XiangziManus(ToolCallback[] allTools, ChatModel dashscopeChatModel) {

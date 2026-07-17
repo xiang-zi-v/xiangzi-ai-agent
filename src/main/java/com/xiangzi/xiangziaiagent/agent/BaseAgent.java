@@ -77,7 +77,7 @@ public abstract class BaseAgent {
             while (this.currentStep < this.maxStep && this.state != AgentState.FINISHED) {
                 this.currentStep++;
                 // 获取每一步的结果
-                String stepResult = this.step();
+                String stepResult = this.step(null);
                 // 每一步 step 执行完都要检查是否陷入循环
                 if (isStuck()) {
                     handleStuckState();
@@ -137,13 +137,13 @@ public abstract class BaseAgent {
                 while (this.currentStep < this.maxStep && this.state != AgentState.FINISHED) {
                     this.currentStep++;
                     // 获取每一步的结果
-                    String stepResult = this.step();
+                    String stepResult = this.step(emitter);
                     // 每一步 step 执行完都要检查是否陷入循环
                     if (isStuck()) {
                         handleStuckState();
                     }
                     String result = "Step " + this.currentStep + ": " + stepResult;
-                    emitter.send(result);
+//                    emitter.send(result);
                 }
                 if (this.currentStep >= this.maxStep) {
                     this.state = AgentState.FINISHED;
@@ -183,7 +183,7 @@ public abstract class BaseAgent {
     }
 
 
-    public abstract String step();
+    public abstract String step(SseEmitter emitter);
 
     protected void clearUp() {
         this.messagesList.clear();

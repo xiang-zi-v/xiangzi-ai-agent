@@ -2,6 +2,7 @@ package com.xiangzi.xiangziaiagent.agent;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 /**
  * ReAct (Reasoning and Acting) 模式的代理抽象类
@@ -16,7 +17,7 @@ public abstract class ReActAgent extends BaseAgent {
      *
      * @return 是否需要执行行动，true表示需要执行，false表示不需要执行
      */
-    public abstract boolean think();
+    public abstract boolean think(SseEmitter emitter);
 
     /**
      * 执行决定的行动
@@ -32,10 +33,10 @@ public abstract class ReActAgent extends BaseAgent {
      * @return 步骤执行结果
      */
     @Override
-    public String step() {
+    public String step(SseEmitter emitter) {
         // 执行父类的每一个步骤，每个步骤分为思考和行动
         try {
-            boolean thinkResult = this.think();
+            boolean thinkResult = this.think(emitter);
             if (!thinkResult) {
                 return "思考完成 - 无需行动";
             }
