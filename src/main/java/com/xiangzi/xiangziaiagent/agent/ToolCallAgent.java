@@ -85,6 +85,10 @@ public class ToolCallAgent extends ReActAgent {
             List<AssistantMessage.ToolCall> accumulatedToolCalls = new ArrayList<>();
             AtomicReference<ChatResponse> lastChatResponseRef = new AtomicReference<>();
 
+            // 支持用户手动取消：当 Agent 状态变为 CANCELLED 时中断 Flux 流
+            chatResponseFlux = chatResponseFlux
+                    .takeWhile(chunk -> this.getState() != AgentState.CANCELLED);
+
             // 消费 Flux：doOnNext 逐块处理（打字机下发 + 聚合文本 + 收集 toolCalls），
             // 然后通过 blockLast() 等待流式全部返回并得到最后一个 ChatResponse。
             ChatResponse lastChatResponse = chatResponseFlux
@@ -118,6 +122,10 @@ public class ToolCallAgent extends ReActAgent {
                         }
                     })
                     .doOnError(error -> {
+                        if (this.getState() == AgentState.CANCELLED) {
+                            // 用户主动取消导致的错误，忽略
+                            return;
+                        }
                         log.error(getName() + "的流式思考过程遇到了问题: " + error.getMessage(), error);
                         if (emitter != null) {
                             try {

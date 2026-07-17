@@ -20,8 +20,13 @@ public enum AgentState {
      */  
     FINISHED,  
 
-    /**  
-     * 错误状态  
-     */  
-    ERROR  
+    /**
+     * 错误状态
+     */
+    ERROR,
+
+    /**
+     * 已取消状态（用户手动停止）
+     */
+    CANCELLED
 }

@@ -33,8 +33,8 @@ public abstract class BaseAgent {
     // 下一步提示词
     private String nextStepPrompt;
 
-    // agent 状态
-    private AgentState state = AgentState.IDLE;
+    // agent 状态（volatile 保证取消线程的写入对工作线程立即可见）
+    private volatile AgentState state = AgentState.IDLE;
 
     // 当前步骤
     private int currentStep = 0;
@@ -74,10 +74,14 @@ public abstract class BaseAgent {
         try {
 
             // 如果当前的状态没有完成，且当前的步骤没有超过最大步骤，继续执行
-            while (this.currentStep < this.maxStep && this.state != AgentState.FINISHED) {
+            while (this.currentStep < this.maxStep && this.state != AgentState.FINISHED && this.state != AgentState.CANCELLED) {
                 this.currentStep++;
                 // 获取每一步的结果
                 String stepResult = this.step(null);
+                // 检查是否在 step 执行期间被取消
+                if (this.state == AgentState.CANCELLED) {
+                    break;
+                }
                 // 每一步 step 执行完都要检查是否陷入循环
                 if (isStuck()) {
                     handleStuckState();
@@ -134,10 +138,14 @@ public abstract class BaseAgent {
         ThreadUtil.execAsync(() -> {
             try {
                 // 如果当前的状态没有完成，且当前的步骤没有超过最大步骤，继续执行
-                while (this.currentStep < this.maxStep && this.state != AgentState.FINISHED) {
+                while (this.currentStep < this.maxStep && this.state != AgentState.FINISHED && this.state != AgentState.CANCELLED) {
                     this.currentStep++;
                     // 获取每一步的结果
                     String stepResult = this.step(emitter);
+                    // 检查是否在 step 执行期间被取消
+                    if (this.state == AgentState.CANCELLED) {
+                        break;
+                    }
                     // 每一步 step 执行完都要检查是否陷入循环
                     if (isStuck()) {
                         handleStuckState();
@@ -151,6 +159,10 @@ public abstract class BaseAgent {
                 }
                 emitter.complete();
             } catch (Exception e) {
+                if (this.state == AgentState.CANCELLED) {
+                    // 用户主动取消，无需报错
+                    return;
+                }
                 state = AgentState.ERROR;
                 log.error("执行智能体失败", e);
                 try {
@@ -164,28 +176,13 @@ public abstract class BaseAgent {
             }
         });
 
-        // 设置超时和完成回调
-        emitter.onTimeout(() -> {
-            this.state = AgentState.ERROR;
-            this.clearUp();
-            log.warn("SSE connection timed out");
-        });
-
-        emitter.onCompletion(() -> {
-            if (this.state == AgentState.RUNNING) {
-                this.state = AgentState.FINISHED;
-            }
-            this.clearUp();
-            log.info("SSE connection completed");
-        });
-
         return emitter;
     }
 
 
     public abstract String step(SseEmitter emitter);
 
-    protected void clearUp() {
+    public void clearUp() {
         this.messagesList.clear();
     }
 

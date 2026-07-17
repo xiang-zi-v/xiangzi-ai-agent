@@ -101,13 +101,23 @@
           :disabled="streaming"
           @keydown.enter="sendMessage"
         />
+        <!-- 停止按钮：流式输出期间显示 -->
         <button
+          v-if="streaming"
+          class="stop-btn"
+          @click="stopGeneration"
+          title="停止生成"
+        >
+          <span class="stop-icon">■</span>
+        </button>
+        <!-- 发送按钮：非流式期间显示 -->
+        <button
+          v-else
           class="send-btn"
-          :disabled="!inputText.trim() || streaming"
+          :disabled="!inputText.trim()"
           @click="sendMessage"
         >
-          <span v-if="!streaming" class="send-icon">▶</span>
-          <span v-else class="send-loading">●</span>
+          <span class="send-icon">▶</span>
         </button>
       </div>
     </div>
@@ -134,6 +144,7 @@ const props = defineProps({
   avatarColor1: { type: String, default: '#00f0ff' },
   avatarColor2: { type: String, default: '#b44dff' },
   aiAvatarSVG: { type: String, default: '' },
+  useCancelEndpoint: { type: Boolean, default: false },
 })
 
 // SEO
@@ -148,6 +159,7 @@ const streaming = ref(false)
 const chatId = ref('')
 let abortController = null
 let msgIdCounter = 0
+let cancelToken = ''
 
 const messagesRef = ref(null)
 const scrollAnchorRef = ref(null)
@@ -251,7 +263,10 @@ async function sendMessage() {
   addMessage('ai', '')
   streaming.value = true
 
-  const params = new URLSearchParams({ message: text })
+  // 生成取消令牌：用于支持手动停止 AI 回复
+  cancelToken = 'cancel_' + Date.now() + '_' + Math.random().toString(36).substring(2, 10)
+
+  const params = new URLSearchParams({ message: text, cancelToken })
   if (props.needChatId) {
     if (!chatId.value) {
       chatId.value = generateChatId()
@@ -301,6 +316,40 @@ async function sendMessage() {
   }
 }
 
+// 手动停止 AI 生成
+async function stopGeneration() {
+  if (!streaming.value) return
+
+  // 1. 断开 fetch 连接（对所有 SSE 端点有效）
+  if (abortController) {
+    abortController.abort()
+  }
+
+  // 2. SseEmitter 端点需要显式通知后端中断 Agent 循环
+  if (props.useCancelEndpoint && cancelToken) {
+    try {
+      await fetch(`/api/ai/stop?cancelToken=${encodeURIComponent(cancelToken)}`, {
+        method: 'POST',
+      })
+    } catch {
+      // 忽略网络错误，abortController.abort() 已断开连接
+    }
+  }
+
+  // 3. 更新 UI 状态
+  streaming.value = false
+
+  // 4. 在最后一条 AI 消息末尾标记已停止
+  const lastMsg = messages.value[messages.value.length - 1]
+  if (lastMsg && lastMsg.role === 'ai') {
+    if (!lastMsg.content) {
+      lastMsg.content = '已停止生成。'
+    } else {
+      lastMsg.content += '\n\n[已停止生成]'
+    }
+  }
+}
+
 onMounted(() => {
   nextTick(() => {
     inputRef.value?.focus()
@@ -310,6 +359,12 @@ onMounted(() => {
 onUnmounted(() => {
   if (abortController) {
     abortController.abort()
+  }
+  // 组件卸载时尽力通知后端取消（fire-and-forget）
+  if (props.useCancelEndpoint && cancelToken && streaming.value) {
+    fetch(`/api/ai/stop?cancelToken=${encodeURIComponent(cancelToken)}`, {
+      method: 'POST',
+    }).catch(() => {})
   }
 })
 </script>
@@ -704,6 +759,34 @@ onUnmounted(() => {
 
 .input-field:disabled {
   opacity: 0.5;
+}
+
+/* ---- 停止按钮 ---- */
+.stop-btn {
+  width: 38px;
+  height: 38px;
+  border: none;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+  color: #fff;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+  animation: stopPulse 1.5s ease-in-out infinite;
+}
+
+.stop-btn:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 20px rgba(255, 107, 107, 0.5);
+}
+
+@keyframes stopPulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(255, 107, 107, 0.3); }
+  50% { box-shadow: 0 0 18px rgba(255, 107, 107, 0.6); }
 }
 
 .send-btn {

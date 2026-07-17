@@ -3,6 +3,7 @@
     title="AI 超级智能体"
     :endpoint="'/ai/manus/chat'"
     :needChatId="false"
+    :useCancelEndpoint="true"
     aiName="超级智能体"
     emptyText="让 AI 超级智能体帮你解决各种复杂问题"
     seoTitle="AI 超级智能体"
