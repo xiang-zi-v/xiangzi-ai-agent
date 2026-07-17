@@ -1,6 +1,9 @@
 package com.xiangzi.xiangziaiagent.advisor;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.ai.chat.client.ChatClientMessageAggregator;
+import org.springframework.ai.chat.client.ChatClientRequest;
+import org.springframework.ai.chat.client.ChatClientResponse;
 import org.springframework.ai.chat.client.advisor.api.*;
 import org.springframework.ai.chat.model.MessageAggregator;
 import reactor.core.publisher.Flux;
@@ -13,41 +16,7 @@ import reactor.core.publisher.Flux;
  */
 
 @Slf4j
-public class MyLoggerAdvisor implements CallAroundAdvisor, StreamAroundAdvisor {
-
-    /**
-     * 请求之前
-     */
-    private AdvisedRequest before(AdvisedRequest request) {
-        log.info("AI request:{}", request.userText());
-        return request;
-    }
-
-    /**
-     * 请求之后
-     */
-    private void after(AdvisedResponse response) {
-        log.info("AI response:{}", response.response().getResult().getOutput().getText());
-    }
-
-    @Override
-    public AdvisedResponse aroundCall(AdvisedRequest advisedRequest, CallAroundAdvisorChain chain) {
-        advisedRequest = this.before(advisedRequest);
-        AdvisedResponse advisedResponse = chain.nextAroundCall(advisedRequest);
-        this.after(advisedResponse);
-        return advisedResponse;
-    }
-
-    @Override
-    public Flux<AdvisedResponse> aroundStream(AdvisedRequest advisedRequest, StreamAroundAdvisorChain chain) {
-
-        advisedRequest = this.before(advisedRequest);
-        Flux<AdvisedResponse> advisedResponseFlux = chain.nextAroundStream(advisedRequest);
-
-        // 通过 MessageAggregator工具类将Flux响应聚合成一个单个的AdvisedResponse，每个AdvisedResponse包含一个Message
-        // 不能在 MessageAggregator 中修改响应，因为他是只读的
-        return (new MessageAggregator()).aggregateAdvisedResponse(advisedResponseFlux, this::after);
-    }
+public class MyLoggerAdvisor implements CallAdvisor, StreamAdvisor {
 
     @Override
     public String getName() {
@@ -58,4 +27,38 @@ public class MyLoggerAdvisor implements CallAroundAdvisor, StreamAroundAdvisor {
     public int getOrder() {
         return 0;
     }
+
+    /**
+     * 请求之前
+     */
+    private ChatClientRequest before(ChatClientRequest request) {
+        log.info("AI Request: {}", request.prompt());
+        return request;
+    }
+
+    /**
+     * 请求之后
+     */
+    private void observeAfter(ChatClientResponse chatClientResponse) {
+        log.info("AI Response: {}", chatClientResponse.chatResponse().getResult().getOutput().getText());
+    }
+
+    @Override
+    public ChatClientResponse adviseCall(ChatClientRequest chatClientRequest, CallAdvisorChain chain) {
+        chatClientRequest = before(chatClientRequest);
+        ChatClientResponse chatClientResponse = chain.nextCall(chatClientRequest);
+        observeAfter(chatClientResponse);
+        return chatClientResponse;
+    }
+
+    @Override
+    public Flux<ChatClientResponse> adviseStream(ChatClientRequest chatClientRequest, StreamAdvisorChain chain) {
+        chatClientRequest = before(chatClientRequest);
+        Flux<ChatClientResponse> chatClientResponseFlux = chain.nextStream(chatClientRequest);
+        return (new ChatClientMessageAggregator()).aggregateChatClientResponse(chatClientResponseFlux, this::observeAfter);
+    }
+
+
+
+
 }

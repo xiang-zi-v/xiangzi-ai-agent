@@ -34,14 +34,10 @@ public class MysqlChatMemory implements ChatMemory {
     }
 
     @Override
-    public List<Message> get(String conversationId, int lastN) {
+    public List<Message> get(String conversationId) {
         return this.chatMemoryRepository.findByConversationId(conversationId);
     }
 
-    public List<Message> get(String conversationId) {
-        Assert.hasText(conversationId, "conversationId cannot be null or empty");
-        return this.chatMemoryRepository.findByConversationId(conversationId);
-    }
 
     public void clear(String conversationId) {
         Assert.hasText(conversationId, "conversationId cannot be null or empty");

@@ -3,7 +3,6 @@ package com.xiangzi.xiangziaiagent.agent;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.cloud.ai.dashscope.chat.DashScopeChatOptions;
-import com.xiangzi.xiangziaiagent.agent.ReActAgent;
 import com.xiangzi.xiangziaiagent.agent.model.AgentState;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -28,8 +27,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
-import static org.springframework.ai.chat.client.advisor.AbstractChatMemoryAdvisor.CHAT_MEMORY_CONVERSATION_ID_KEY;
-import static org.springframework.ai.chat.client.advisor.AbstractChatMemoryAdvisor.CHAT_MEMORY_RETRIEVE_SIZE_KEY;
 
 /**
  * 处理工具调用的基础代理类，具体实现了 think 和 act 方法，可以用作创建实例的父类
@@ -57,7 +54,7 @@ public class ToolCallAgent extends ReActAgent {
         this.toolCallingManager = ToolCallingManager.builder().build();
         // 禁用 Spring AI 内置的工具调用机制，自己维护选项和消息上下文
         this.chatOptions = DashScopeChatOptions.builder()
-                .withProxyToolCalls(true)
+                .withInternalToolExecutionEnabled(false)
                 .build();
     }
 
